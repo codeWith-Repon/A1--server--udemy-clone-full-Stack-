@@ -2,7 +2,7 @@ const Course = require("../../models/Course");
 
 const getAllStudentViewCours = async (req, res) => {
   try {
-    const coursesList = await Course.findOne({});
+    const coursesList = await Course.find({});
 
     if (coursesList.length === 0) {
       return res.status(404).json({
