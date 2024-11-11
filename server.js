@@ -5,16 +5,19 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth-routes/index.js");
 const mediaRouters = require("./routes/instructor-routes/media-routes.js");
 const instructorCourseRoutes = require("./routes/instructor-routes/course-routes.js");
+const studentViewCourseRotes = require("./routes/student-routes/course-routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(express.json());
 
@@ -26,8 +29,9 @@ mongoose
 
 //routes configuration
 app.use("/auth", authRoutes);
-app.use("/media", mediaRouters)
-app.use("/instructor/course", instructorCourseRoutes)
+app.use("/media", mediaRouters);
+app.use("/instructor/course", instructorCourseRoutes);
+app.use("/student/course", studentViewCourseRotes);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);
