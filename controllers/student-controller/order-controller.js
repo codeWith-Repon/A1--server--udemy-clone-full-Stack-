@@ -2,6 +2,7 @@ const paypal = require("../../helpers/paypal");
 const Order = require("../../models/Order");
 const Course = require("../../models/Course");
 const StudentCourses = require("../../models/StudentCourses");
+const StudentCourses = require("../../models/StudentCourses");
 
 const createOrder = async (req, res) => {
   try {
@@ -119,14 +120,67 @@ const capturePaymentAndFinalizeOrder = async (req, res) => {
     }
 
     order.paymentStatus = "paid";
-    order.orderStatus = "confirmed"
+    order.orderStatus = "confirmed";
     order.paymentId = paymentId;
     order.payerId = payerId;
 
-    await order.save()
+    await order.save();
 
-    //
-    
+    //uypdate out student course modle
+    //1st
+    const StudentCourses = await StudentCourses.findOne({
+      userId: order.userId,
+    });
+
+    if (StudentCourses) {
+      //3rd
+      StudentCourses.courses.push({
+        courseId: order.courseId,
+        title: order.courseTitle,
+        instructorId: order.instructorId,
+        instructorName: order.instructorName,
+        dateOfPurchase: order.orderDate,
+        courseImage: order.courseImage,
+      });
+      await StudentCourses.save();
+    } else {
+      //2nd
+      //when user bying a course 1st time
+
+      const newStudentCorses = new StudentCourses({
+        userId: order.userId,
+        courses: [
+          {
+            courseId: order.courseId,
+            title: order.courseTitle,
+            instructorId: order.instructorId,
+            instructorName: order.instructorName,
+            dateOfPurchase: order.orderDate,
+            courseImage: order.courseImage,
+          },
+        ],
+      });
+      await newStudentCorses.save();
+    }
+
+    //4th
+    //update the course schema students
+    await Course.findByIdAndUpdate(order.courseId, {
+      $addToSet: {
+        students: {
+          studentId: order.userId,
+          studentName: order.userName,
+          studentEmail: order.userEmail,
+          paidAmount: order.coursePricing,
+        },
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Order confirmed",
+      data: order,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
