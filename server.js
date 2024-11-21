@@ -35,7 +35,7 @@ app.use("/media", mediaRouters);
 app.use("/instructor/course", instructorCourseRoutes);
 app.use("/student/course", studentViewCourseRotes);
 app.use("/student/order", studentViewOrderRoutes);
-app.use("/student/courses", studentCoursesRoutes);
+app.use("/student/courses-bought", studentCoursesRoutes);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);
