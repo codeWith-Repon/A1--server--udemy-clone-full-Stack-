@@ -2,7 +2,6 @@ const paypal = require("../../helpers/paypal");
 const Order = require("../../models/Order");
 const Course = require("../../models/Course");
 const StudentCourses = require("../../models/StudentCourses");
-const StudentCourses = require("../../models/StudentCourses");
 
 const createOrder = async (req, res) => {
   try {
@@ -128,13 +127,13 @@ const capturePaymentAndFinalizeOrder = async (req, res) => {
 
     //uypdate out student course modle
     //1st
-    const StudentCourses = await StudentCourses.findOne({
+    const studentCourses = await StudentCourses.findOne({
       userId: order.userId,
     });
 
-    if (StudentCourses) {
+    if (studentCourses) {
       //3rd
-      StudentCourses.courses.push({
+      studentCourses.courses.push({
         courseId: order.courseId,
         title: order.courseTitle,
         instructorId: order.instructorId,
@@ -142,7 +141,7 @@ const capturePaymentAndFinalizeOrder = async (req, res) => {
         dateOfPurchase: order.orderDate,
         courseImage: order.courseImage,
       });
-      await StudentCourses.save();
+      await studentCourses.save();
     } else {
       //2nd
       //when user bying a course 1st time
