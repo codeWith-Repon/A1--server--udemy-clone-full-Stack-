@@ -1,4 +1,5 @@
 const Course = require("../../models/Course");
+const StudentCourses = require("../../models/StudentCourses");
 
 const getAllStudentViewCours = async (req, res) => {
   try {
@@ -59,7 +60,7 @@ const getAllStudentViewCours = async (req, res) => {
 
 const getStudentViewCourseDetails = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id, studentId } = req.params;
 
     const courseDetails = await Course.findById(id);
 
@@ -71,9 +72,25 @@ const getStudentViewCourseDetails = async (req, res) => {
       });
     }
 
+    //check if the student purchased this course or not
+
+    const studentCourses = await StudentCourses.findOne({ userId: studentId });
+
+    // console.log(studentCourses, "StudentCourses")
+
+    // console.log(studentId,"studentId", id, "id" )
+
+    const ifStudentAlreadyBoughtCurrentCourse =
+      studentCourses.courses.findIndex((item) => item.courseId === id) > -1;
+    console.log(
+      ifStudentAlreadyBoughtCurrentCourse,
+      "ifStudentAlreadyBoughtCurrentCourse"
+    );
+
     res.status(200).json({
       success: true,
       data: courseDetails,
+      isCoursePurchased: ifStudentAlreadyBoughtCurrentCourse,
     });
   } catch (error) {
     console.log(error);
