@@ -60,7 +60,7 @@ const getAllStudentViewCours = async (req, res) => {
 
 const getStudentViewCourseDetails = async (req, res) => {
   try {
-    const { id, studentId } = req.params;
+    const { id } = req.params;
 
     const courseDetails = await Course.findById(id);
 
@@ -72,25 +72,9 @@ const getStudentViewCourseDetails = async (req, res) => {
       });
     }
 
-    //check if the student purchased this course or not
-
-    const studentCourses = await StudentCourses.findOne({ userId: studentId });
-
-    // console.log(studentCourses, "StudentCourses")
-
-    // console.log(studentId,"studentId", id, "id" )
-
-    const ifStudentAlreadyBoughtCurrentCourse =
-      studentCourses.courses.findIndex((item) => item.courseId === id) > -1;
-    console.log(
-      ifStudentAlreadyBoughtCurrentCourse,
-      "ifStudentAlreadyBoughtCurrentCourse"
-    );
-
     res.status(200).json({
       success: true,
       data: courseDetails,
-      isCoursePurchased: ifStudentAlreadyBoughtCurrentCourse,
     });
   } catch (error) {
     console.log(error);
@@ -101,4 +85,34 @@ const getStudentViewCourseDetails = async (req, res) => {
   }
 };
 
-module.exports = { getAllStudentViewCours, getStudentViewCourseDetails };
+const checkCoursePurchaseInfo = async (req, res) => {
+  try {
+    const { id, studentId } = req.params;
+    const studentCourses = await StudentCourses.findOne({ userId: studentId });
+
+    const ifStudentAlreadyBoughtCurrentCourse =
+      studentCourses.courses.findIndex((item) => item.courseId === id) > -1;
+
+    console.log(
+      ifStudentAlreadyBoughtCurrentCourse,
+      "ifStudentAlreadyBoughtCurrentCourse"
+    );
+
+    res.status(200).json({
+      success: true,
+      data: ifStudentAlreadyBoughtCurrentCourse,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Some error occured",
+    });
+  }
+};
+
+module.exports = {
+  getAllStudentViewCours,
+  getStudentViewCourseDetails,
+  checkCoursePurchaseInfo,
+};
