@@ -28,7 +28,7 @@ const getCurrentCourseProgress = async (req, res) => {
 
     if (!isCurrentCoursePurchaseByCurrentUserOrNot) {
       return res.status(200).json({
-        success: false,
+        success: true,
         data: {
           isPurchased: false,
         },
@@ -40,8 +40,12 @@ const getCurrentCourseProgress = async (req, res) => {
       userId,
       courseId,
     }).populate("courseId");
+    console.log(currentUserCourseProgress, "currentUserCourseProgress");
 
-    if (currentUserCourseProgress?.lecturesProgress?.length === 0) {
+    if (
+      !currentUserCourseProgress ||
+      currentUserCourseProgress?.lecturesProgress?.length === 0
+    ) {
       const course = await Course.findById(courseId);
       if (!course) {
         return res.status(404).json({
@@ -64,10 +68,10 @@ const getCurrentCourseProgress = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        courseDetails: currentUserCourseProgress.courseId,
-        progress: currentUserCourseProgress.lecturesProgress,
-        completed: currentUserCourseProgress.completed,
-        completionDate: currentUserCourseProgress.completionDate,
+        courseDetails: currentUserCourseProgress?.courseId,
+        progress: currentUserCourseProgress?.lecturesProgress,
+        completed: currentUserCourseProgress?.completed,
+        completionDate: currentUserCourseProgress?.completionDate,
         isPurchased: true,
       },
     });
