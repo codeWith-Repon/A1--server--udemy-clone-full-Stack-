@@ -60,6 +60,7 @@ const getCurrentCourseProgress = async (req, res) => {
           courseDetails: course,
           progress: [],
           isPurchased: true,
+          completed: true
         },
       });
     }
