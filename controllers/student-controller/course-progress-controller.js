@@ -39,8 +39,7 @@ const getCurrentCourseProgress = async (req, res) => {
     const currentUserCourseProgress = await CourseProgress.findOne({
       userId,
       courseId,
-    }).populate("courseId");
-    console.log(currentUserCourseProgress, "currentUserCourseProgress");
+    });
 
     if (
       !currentUserCourseProgress ||
@@ -65,10 +64,12 @@ const getCurrentCourseProgress = async (req, res) => {
       });
     }
 
+    const courseDetails = await Course.findById(courseId);
+
     res.status(200).json({
       success: true,
       data: {
-        courseDetails: currentUserCourseProgress?.courseId,
+        courseDetails,
         progress: currentUserCourseProgress?.lecturesProgress,
         completed: currentUserCourseProgress?.completed,
         completionDate: currentUserCourseProgress?.completionDate,
