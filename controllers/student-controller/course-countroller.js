@@ -89,9 +89,9 @@ const checkCoursePurchaseInfo = async (req, res) => {
   try {
     const { id, studentId } = req.params;
     const studentCourses = await StudentCourses.findOne({ userId: studentId });
-
+console.log(studentCourses,"studentCourses")
     const ifStudentAlreadyBoughtCurrentCourse =
-      studentCourses.courses.findIndex((item) => item.courseId === id) > -1;
+      studentCourses?.courses.findIndex((item) => item.courseId === id) > -1;
 
     console.log(
       ifStudentAlreadyBoughtCurrentCourse,
